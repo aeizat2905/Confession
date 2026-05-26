@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will You Marry Me? 💍</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #fff0f3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #wrap {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem 1.25rem;
+    text-align: center;
+  }
+  .heart-icon {
+    font-size: 64px;
+    display: block;
+    animation: pulse 1.2s infinite;
+    margin-bottom: 0.75rem;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.35rem;
+  }
+  .sub {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .btn-yes, .btn-no-static {
+    flex: 1;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #e8495a;
+    color: white;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-yes:hover { background: #c73347; transform: scale(1.03); }
+  .btn-no-static:hover { background: #c73347; }
+  .msg {
+    font-size: 14px;
+    color: #c73347;
+    font-weight: 500;
+    min-height: 22px;
+    margin-bottom: 0.5rem;
+    transition: opacity 0.3s;
+    line-height: 1.5;
+  }
+  #no-btn-float {
+    position: fixed;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    background: #e8495a;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    touch-action: none;
+    user-select: none;
+    transition: font-size 0.3s;
+    display: none;
+    z-index: 999;
+  }
+  #toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 9999;
+    max-width: 90vw;
+    white-space: normal;
+    text-align: center;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  #yes-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    animation: fadeIn 0.6s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #yes-screen .big {
+    font-size: 90px;
+    animation: pulse 1s infinite;
+    margin-bottom: 1rem;
+  }
+  #yes-screen h1 { font-size: 28px; margin-bottom: 0.5rem; color: #e8495a; }
+  #yes-screen p { color: #666; font-size: 15px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="question-screen">
+    <span class="heart-icon">💍</span>
+    <h1>Will you marry me?</h1>
+    <p class="sub">I've been waiting for this moment forever... 🥺</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="sayYes()">Yes! 💕</button>
+      <button class="btn-no-static" id="no-static">No 🙅</button>
+    </div>
+    <p class="msg" id="msg"></p>
+  </div>
+
+  <div id="yes-screen">
+    <div class="big">💍</div>
+    <h1>She said YES!! 🎉</h1>
+    <p>I love you soooo much! 💖</p>
+    <p style="margin-top:0.75rem;">Hope our marriage is happy until hereafter. 🌙✨</p>
+  </div>
+</div>
+
+<button id="no-btn-float">No 🙅</button>
+<div id="toast"></div>
+
+<script>
+  const noStatic = document.getElementById('no-static');
+  const noFloat  = document.getElementById('no-btn-float');
+  const msgEl    = document.getElementById('msg');
+  const toast    = document.getElementById('toast');
+  let attempts   = 0;
+  let noSize     = 18;
+  let toastTimer = null;
+
+  const funnyMessages = [
+    "Nope, that button is NOT for you 😤",
+    "Your finger slipped, right? 😅",
+    "Haha nice try! 😂",
+    "That button is broken, try Yes instead 🔧",
+    "NO is not in your vocabulary today 🚫",
+    "The button said: NOT TODAY 🏃💨",
+    "Are you seriously still trying?? 😭",
+    "My love is chasing you like this button 💘",
+    "Physics error: No button cannot be clicked 🤓",
+    "Babe... just say YES 🥺👉👈",
+    "I will cook for you every day if you say Yes! 🍳",
+    "Pretty please?? 🙏✨",
+    "This button ran away because it knows the answer is YES 💍",
+    "Error 404: Reason to say No not found 😎",
+    "Your heart already said Yes, just click it! 💓",
+    "I promise I won't steal your fries... maybe 🍟😅",
+    "The universe says: SAY YES 🌌",
+    "Even the button knows you love me 💕",
+    "WARNING: Saying No may cause extreme happiness loss 😔",
+    "JUST. CLICK. YES. 😩💍"
+  ];
+
+  let msgIndex = 0;
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function showFloat() {
+    const rect = noStatic.getBoundingClientRect();
+    noFloat.style.left = rect.left + 'px';
+    noFloat.style.top  = rect.top  + 'px';
+    noFloat.style.display = 'block';
+    noStatic.style.visibility = 'hidden';
+    showToast(funnyMessages[msgIndex % funnyMessages.length]);
+    msgIndex++;
+    flee(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  noStatic.addEventListener('mouseover', showFloat);
+  noStatic.addEventListener('touchstart', e => { e.preventDefault(); showFloat(); }, { passive: false });
+  noStatic.addEventListener('click', e => { e.stopPropagation(); showFloat(); });
+
+  function flee(tx, ty) {
+    const bw = noFloat.offsetWidth  || 110;
+    const bh = noFloat.offsetHeight || 52;
+    const bx = noFloat.offsetLeft + bw / 2;
+    const by = noFloat.offsetTop  + bh / 2;
+    let dx = bx - tx;
+    let dy = by - ty;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    dx = (dx / dist) * 170;
+    dy = (dy / dist) * 170;
+    let nx = Math.max(8, Math.min(window.innerWidth  - bw - 8, noFloat.offsetLeft + dx));
+    let ny = Math.max(8, Math.min(window.innerHeight - bh - 8, noFloat.offsetTop  + dy));
+    noFloat.style.left = nx + 'px';
+    noFloat.style.top  = ny + 'px';
+  }
+
+  function getPos(e) {
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX, y: src.clientY };
+  }
+
+  function onMove(e) {
+    if (noFloat.style.display === 'none') return;
+    const { x, y } = getPos(e);
+    const bw = noFloat.offsetWidth  || 110;
+    const bh = noFloat.offsetHeight || 52;
+    const dist = Math.sqrt(
+      Math.pow(x - (noFloat.offsetLeft + bw / 2), 2) +
+      Math.pow(y - (noFloat.offsetTop  + bh / 2), 2)
+    );
+    if (dist < 100) {
+      attempts++;
+      if (noSize > 11) noSize -= 0.5;
+      noFloat.style.fontSize = noSize + 'px';
+      flee(x, y);
+      showToast(funnyMessages[msgIndex % funnyMessages.length]);
+      msgIndex++;
+    }
+  }
+
+  document.addEventListener('touchmove', onMove, { passive: true });
+  document.addEventListener('mousemove', onMove);
+
+  noFloat.addEventListener('click',      e => { e.stopPropagation(); flee(e.clientX, e.clientY); showToast(funnyMessages[msgIndex % funnyMessages.length]); msgIndex++; });
+  noFloat.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; flee(t.clientX, t.clientY); showToast(funnyMessages[msgIndex % funnyMessages.length]); msgIndex++; }, { passive: false });
+
+  function sayYes() {
+    document.getElementById('question-screen').style.display = 'none';
+    noFloat.style.display = 'none';
+    toast.classList.remove('show');
+    document.getElementById('yes-screen').style.display = 'flex';
+  }
+</script>
+</body>
+</html>
