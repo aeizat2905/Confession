@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will You Marry Me? 💍</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #fff0f3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #wrap {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem 1.25rem;
+    text-align: center;
+  }
+  .heart-icon {
+    font-size: 64px;
+    display: block;
+    animation: pulse 1.2s infinite;
+    margin-bottom: 0.75rem;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.35rem;
+  }
+  .sub {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .btn-yes, .btn-no-static {
+    flex: 1;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #e8495a;
+    color: white;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-yes:hover { background: #c73347; transform: scale(1.03); }
+  .btn-no-static:hover { background: #c73347; }
+  .msg {
+    font-size: 14px;
+    color: #c73347;
+    font-weight: 500;
+    min-height: 22px;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+  #no-btn-float {
+    position: fixed;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    background: #e8495a;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    touch-action: none;
+    user-select: none;
+    transition: font-size 0.3s;
+    display: none;
+    z-index: 999;
+  }
+  #toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 9999;
+    max-width: 88vw;
+    white-space: normal;
+    text-align: center;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  #yes-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0; left: 0;
+    background: #ffb6c1 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCI+CiAgPCEtLSBwaW5rIGJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmZmI2YzEiLz4KCiAgPCEtLSBoZWFydCBidWJibGUgLS0+CiAgPGVsbGlwc2UgY3g9IjE4NSIgY3k9IjUyIiByeD0iMjIiIHJ5PSIyMiIgZmlsbD0iI2ZmNGQ2ZCIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTcwLDY1IDIwMCw2NSAxODUsODAiIGZpbGw9IiNmZjRkNmQiLz4KICA8dGV4dCB4PSIxODUiIHk9IjYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSI+4pmlPC90ZXh0PgoKICA8IS0tIEJSSURFIENBVCAobGVmdCkgLS0+CiAgPCEtLSBib2R5L2RyZXNzIC0tPgogIDxlbGxpcHNlIGN4PSIxNDAiIGN5PSIyMTUiIHJ4PSI0OCIgcnk9IjU1IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gZHJlc3MgZnJpbGxzIC0tPgogIDxlbGxpcHNlIGN4PSIxMTAiIGN5PSIyNDAiIHJ4PSIxOCIgcnk9IjEwIiBmaWxsPSIjZmZiNmMxIiBzdHJva2U9IiMyMjIiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGVsbGlwc2UgY3g9IjE0MCIgY3k9IjI1MiIgcng9IjIwIiByeT0iMTAiIGZpbGw9IiNmZmI2YzEiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8ZWxsaXBzZSBjeD0iMTY4IiBjeT0iMjQwIiByeD0iMTgiIHJ5PSIxMCIgZmlsbD0iI2ZmYjZjMSIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gZmxvd2VycyBib3VxdWV0IC0tPgogIDxjaXJjbGUgY3g9IjExOCIgY3k9IjI0OCIgcj0iOSIgZmlsbD0iI2ZmNjliNCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEzMiIgY3k9IjI1NSIgcj0iOSIgZmlsbD0iI2ZmNDUwMCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEwOCIgY3k9IjI2MCIgcj0iOCIgZmlsbD0iI2ZmZDcwMCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEyMiIgY3k9IjI2NSIgcj0iOCIgZmlsbD0iI2ZmNjliNCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxjaXJjbGUgY3g9IjEzNiIgY3k9IjI2MiIgcj0iNyIgZmlsbD0iI2ZmNDUwMCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gYnJpZGUgaGVhZCAtLT4KICA8ZWxsaXBzZSBjeD0iMTQwIiBjeT0iMTU1IiByeD0iNDAiIHJ5PSIzNiIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8IS0tIGVhcnMgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMDgsMTMwIDExOCwxMDUgMTI4LDEzMCIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBvbHlnb24gcG9pbnRzPSIxMTIsMTI4IDExOSwxMTAgMTI2LDEyOCIgZmlsbD0iI2ZmYjZjMSIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTUyLDEzMCAxNjIsMTA1IDE3MiwxMzAiIGZpbGw9IndoaXRlIiBzdHJva2U9IiMyMjIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTU1LDEyOCAxNjIsMTEwIDE2OSwxMjgiIGZpbGw9IiNmZmI2YzEiLz4KICA8IS0tIHZlaWwgLS0+CiAgPGVsbGlwc2UgY3g9IjE0MCIgY3k9IjEzOCIgcng9IjQyIiByeT0iMTIiIGZpbGw9IndoaXRlIiBzdHJva2U9IiMyMjIiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHJlY3QgeD0iOTgiIHk9IjEzOCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjMwIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNSkiIHN0cm9rZT0ibm9uZSIvPgogIDwhLS0gYnJpZGUgZXllcyAoaGFwcHkpIC0tPgogIDxwYXRoIGQ9Ik0xMjQsMTUyIFExMzAsMTQ2IDEzNiwxNTIiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xNDQsMTUyIFExNTAsMTQ2IDE1NiwxNTIiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gYmx1c2ggLS0+CiAgPGVsbGlwc2UgY3g9IjExOCIgY3k9IjE2MiIgcng9IjkiIHJ5PSI1IiBmaWxsPSIjZmZiNmMxIiBvcGFjaXR5PSIwLjciLz4KICA8ZWxsaXBzZSBjeD0iMTYyIiBjeT0iMTYyIiByeD0iOSIgcnk9IjUiIGZpbGw9IiNmZmI2YzEiIG9wYWNpdHk9IjAuNyIvPgogIDwhLS0gbW91dGggLS0+CiAgPHBhdGggZD0iTTEzMywxNjggUTE0MCwxNzUgMTQ3LDE2OCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNmZjk5OTkiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gbm9zZSAtLT4KICA8ZWxsaXBzZSBjeD0iMTQwIiBjeT0iMTY0IiByeD0iNCIgcnk9IjMiIGZpbGw9IiNmZmI2YzEiLz4KICA8IS0tIHdoaXNrZXJzIC0tPgogIDxsaW5lIHgxPSIxMDAiIHkxPSIxNjMiIHgyPSIxMjgiIHkyPSIxNjYiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8bGluZSB4MT0iMTAwIiB5MT0iMTcwIiB4Mj0iMTI4IiB5Mj0iMTcwIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPGxpbmUgeDE9IjE1MiIgeTE9IjE2NiIgeDI9IjE4MCIgeTI9IjE2MyIgc3Ryb2tlPSIjNTU1IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDxsaW5lIHgxPSIxNTIiIHkxPSIxNzAiIHgyPSIxODAiIHkyPSIxNzAiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8IS0tIHRhaWwgLS0+CiAgPHBhdGggZD0iTTkyLDI1NSBRNjAsMjQwIDcwLDI3MCIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogIDwhLS0gR1JPT00gQ0FUIChyaWdodCkgLS0+CiAgPCEtLSBib2R5L3N1aXQgLS0+CiAgPGVsbGlwc2UgY3g9IjI2MiIgY3k9IjIxNSIgcng9IjQ2IiByeT0iNTIiIGZpbGw9IiM1NTUiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8IS0tIHdoaXRlIHNoaXJ0IC0tPgogIDxlbGxpcHNlIGN4PSIyNjIiIGN5PSIyMDUiIHJ4PSIxOCIgcnk9IjI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gcmVkIHRpZSAtLT4KICA8cG9seWdvbiBwb2ludHM9IjI2MiwxOTUgMjU1LDIyNSAyNjIsMjMyIDI2OSwyMjUiIGZpbGw9IiNlODQ5NWEiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPCEtLSBncm9vbSBoZWFkIC0tPgogIDxlbGxpcHNlIGN4PSIyNjIiIGN5PSIxNTIiIHJ4PSI0MCIgcnk9IjM3IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gZWFycyAtLT4KICA8cG9seWdvbiBwb2ludHM9IjIzMCwxMjggMjQwLDEwMyAyNTAsMTI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cG9seWdvbiBwb2ludHM9IjIzNCwxMjYgMjQwLDEwOCAyNDcsMTI2IiBmaWxsPSIjZmZiNmMxIi8+CiAgPHBvbHlnb24gcG9pbnRzPSIyNzQsMTI4IDI4NCwxMDMgMjk0LDEyOCIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBvbHlnb24gcG9pbnRzPSIyNzcsMTI2IDI4NCwxMDggMjkxLDEyNiIgZmlsbD0iI2ZmYjZjMSIvPgogIDwhLS0gb3JhbmdlIHBhdGNoIG9uIGdyb29tIC0tPgogIDxlbGxpcHNlIGN4PSIyODQiIGN5PSIxNDgiIHJ4PSIxNiIgcnk9IjE0IiBmaWxsPSIjZThhMDIwIi8+CiAgPCEtLSBncm9vbSBleWVzIChjbG9zZWQgaGFwcHkpIC0tPgogIDxwYXRoIGQ9Ik0yNDQsMTUwIFEyNTAsMTQ0IDI1NiwxNTAiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0yNjYsMTUwIFEyNzIsMTQ0IDI3OCwxNTAiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gYmx1c2ggLS0+CiAgPGVsbGlwc2UgY3g9IjI0MCIgY3k9IjE2MCIgcng9IjkiIHJ5PSI1IiBmaWxsPSIjZmZiNmMxIiBvcGFjaXR5PSIwLjciLz4KICA8ZWxsaXBzZSBjeD0iMjg0IiBjeT0iMTYwIiByeD0iOSIgcnk9IjUiIGZpbGw9IiNmZmI2YzEiIG9wYWNpdHk9IjAuNyIvPgogIDwhLS0gbm9zZSAtLT4KICA8ZWxsaXBzZSBjeD0iMjYyIiBjeT0iMTYyIiByeD0iNCIgcnk9IjMiIGZpbGw9IiNmZmI2YzEiLz4KICA8IS0tIG1vdXRoIC0tPgogIDxwYXRoIGQ9Ik0yNTUsMTY4IFEyNjIsMTc0IDI2OSwxNjgiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSIjZmY5OTk5IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIHdoaXNrZXJzIC0tPgogIDxsaW5lIHgxPSIyMjIiIHkxPSIxNjEiIHgyPSIyNTAiIHkyPSIxNjQiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8bGluZSB4MT0iMjIyIiB5MT0iMTY4IiB4Mj0iMjUwIiB5Mj0iMTY4IiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPGxpbmUgeDE9IjI3NCIgeTE9IjE2NCIgeDI9IjMwMiIgeTI9IjE2MSIgc3Ryb2tlPSIjNTU1IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDxsaW5lIHgxPSIyNzQiIHkxPSIxNjgiIHgyPSIzMDIiIHkyPSIxNjgiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8IS0tIHRhaWwgb3JhbmdlIHRpcCAtLT4KICA8cGF0aCBkPSJNMzA4LDI1NSBRMzQwLDIzOCAzMjgsMjY4IiBzdHJva2U9IiMyMjIiIHN0cm9rZS13aWR0aD0iMi41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIzMjgiIGN5PSIyNjgiIHI9IjgiIGZpbGw9IiNlOGEwMjAiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KCiAgPCEtLSBncm91bmQgc2hhZG93IC0tPgogIDxlbGxpcHNlIGN4PSIyMDAiIGN5PSIyNzIiIHJ4PSIxMDAiIHJ5PSIxMiIgZmlsbD0icmdiYSgxODAsMTAwLDEzMCwwLjI1KSIvPgo8L3N2Zz4K") center bottom / 90% auto no-repeat;
+    padding: 2rem 1.5rem 320px;
+    animation: fadeIn 0.7s ease;
+    z-index: 10000;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #yes-screen .big {
+    font-size: 80px;
+    animation: pulse 1s infinite;
+    margin-bottom: 0.75rem;
+  }
+  #yes-screen h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #7a0020;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 1px 3px rgba(255,255,255,0.6);
+  }
+  #yes-screen p {
+    color: #5a0018;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.7;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+  }
+  .yes-card {
+    background: rgba(255,255,255,0.82);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    max-width: 340px;
+    backdrop-filter: blur(4px);
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="question-screen">
+    <span class="heart-icon">💍</span>
+    <h1>Will you marry me?</h1>
+    <p class="sub">I've been waiting for this moment forever... 🥺</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="sayYes()">Yes! 💕</button>
+      <button class="btn-no-static" id="no-static">No 🙅</button>
+    </div>
+    <p class="msg" id="msg"></p>
+  </div>
+</div>
+
+<div id="yes-screen">
+  <div class="yes-card">
+    <div class="big">💍</div>
+    <h1>She said YES!! 🎉</h1>
+    <p>I love you soooo much! 💖</p>
+    <p style="margin-top:0.75rem;">Hope our marriage is happy until hereafter. 🌙✨</p>
+  </div>
+</div>
+
+<button id="no-btn-float">No 🙅</button>
+<div id="toast"></div>
+
+<script>
+  const noStatic = document.getElementById('no-static');
+  const noFloat  = document.getElementById('no-btn-float');
+  const toast    = document.getElementById('toast');
+  let attempts   = 0;
+  let noSize     = 18;
+  let toastTimer = null;
+  let msgIndex   = 0;
+
+  const funnyMessages = [
+    "Nope, that button is NOT for you 😤",
+    "Your finger slipped, right? 😅",
+    "Haha nice try! 😂",
+    "That button is broken, try Yes instead 🔧",
+    "NO is not in your vocabulary today 🚫",
+    "The button said: NOT TODAY 🏃💨",
+    "Are you seriously still trying?? 😭",
+    "My love is chasing you like this button 💘",
+    "Physics error: No button cannot be clicked 🤓",
+    "Babe... just say YES 🥺👉👈",
+    "I will cook for you every day if you say Yes! 🍳",
+    "Pretty please?? 🙏✨",
+    "This button ran away because it knows the answer is YES 💍",
+    "Error 404: Reason to say No not found 😎",
+    "Your heart already said Yes, just click it! 💓",
+    "I promise I won't steal your fries... maybe 🍟😅",
+    "The universe says: SAY YES 🌌",
+    "Even the button knows you love me 💕",
+    "WARNING: Saying No may cause extreme happiness loss 😔",
+    "JUST. CLICK. YES. 😩💍"
+  ];
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function showFloat() {
+    const rect = noStatic.getBoundingClientRect();
+    noFloat.style.left = rect.left + 'px';
+    noFloat.style.top  = rect.top  + 'px';
+    noFloat.style.display = 'block';
+    noStatic.style.visibility = 'hidden';
+    showToast(funnyMessages[msgIndex % funnyMessages.length]);
+    msgIndex++;
+    flee(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  noStatic.addEventListener('mouseover', showFloat);
+  noStatic.addEventListener('touchstart', e => { e.preventDefault(); showFloat(); }, { passive: false });
+  noStatic.addEventListener('click', e => { e.stopPropagation(); showFloat(); });
+
+  function flee(tx, ty) {
+    const bw = noFloat.offsetWidth  || 110;
+    const bh = noFloat.offsetHeight || 52;
+    const bx = noFloat.offsetLeft + bw / 2;
+    const by = noFloat.offsetTop  + bh / 2;
+    let dx = bx - tx, dy = by - ty;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    dx = (dx/dist)*170; dy = (dy/dist)*170;
+    let nx = Math.max(8, Math.min(window.innerWidth  - bw - 8, noFloat.offsetLeft + dx));
+    let ny = Math.max(8, Math.min(window.innerHeight - bh - 8, noFloat.offsetTop  + dy));
+    noFloat.style.left = nx + 'px';
+    noFloat.style.top  = ny + 'px';
+  }
+
+  function getPos(e) {
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX, y: src.clientY };
+  }
+
+  function onMove(e) {
+    if (noFloat.style.display === 'none') return;
+    const { x, y } = getPos(e);
+    const bw = noFloat.offsetWidth  || 110;
+    const bh = noFloat.offsetHeight || 52;
+    const dist = Math.sqrt(
+      Math.pow(x - (noFloat.offsetLeft + bw/2), 2) +
+      Math.pow(y - (noFloat.offsetTop  + bh/2), 2)
+    );
+    if (dist < 100) {
+      attempts++;
+      if (noSize > 11) noSize -= 0.5;
+      noFloat.style.fontSize = noSize + 'px';
+      flee(x, y);
+      showToast(funnyMessages[msgIndex % funnyMessages.length]);
+      msgIndex++;
+    }
+  }
+
+  document.addEventListener('touchmove', onMove, { passive: true });
+  document.addEventListener('mousemove', onMove);
+
+  noFloat.addEventListener('click', e => {
+    e.stopPropagation();
+    flee(e.clientX, e.clientY);
+    showToast(funnyMessages[msgIndex++ % funnyMessages.length]);
+  });
+  noFloat.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    flee(t.clientX, t.clientY);
+    showToast(funnyMessages[msgIndex++ % funnyMessages.length]);
+  }, { passive: false });
+
+  function sayYes() {
+    document.getElementById('question-screen').style.display = 'none';
+    noFloat.style.display = 'none';
+    toast.classList.remove('show');
+    document.getElementById('yes-screen').style.display = 'flex';
+  }
+</script>
+</body>
+</html>
